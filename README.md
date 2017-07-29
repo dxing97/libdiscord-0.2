@@ -23,6 +23,7 @@ This bot will connect to the Discord gateway, remain connected, and have it's cu
 - read config file from specified file location (if not specified, will assume a default location)
 - use libconfig to read config file
 - initialize ld_sessiondata for session specific parameters
+    - import data from ld_configdata
     - check validity of the bot token here
     - if bot token is invalid, kill the bot (maybe ask the user to input a new token?)
     - if _ANYTHING_ is bad/invalid/not what we expected, kill the bot
@@ -33,6 +34,14 @@ This bot will connect to the Discord gateway, remain connected, and have it's cu
         - if can't identify (i.e. Discord closes the websocket), then let the user decide 
         (why would Discord not accept an identify from a valid bot token?)
     - begin heartbeating, and storing (SQL?)/ignoring recieved payloads
+    
+##configdata
+struct containing all the possible fields in the config file
+memset this to 0 before using
+- bot_token (optional, if it's not here then it MUST be in the command line args. Can't Discord without a ticket.)
+- config_path - path to the config file. 
+    - if NULL, it'll look in the default location: current directory, bot.cfg (./bot.cfg)
+- more later maybe
 
 ##sessiondata
 parameters that stay (more or less) constant or persist throughout the lifetime of the bot
