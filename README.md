@@ -51,6 +51,43 @@ memset this to 0 before using
 ## ratelimits
 there is a WSS and a HTTP rate limit.
 
+
+## sessiondata
+parameters that stay (more or less) constant or persist throughout the lifetime of the bot
+- bot token (user specified)
+- heartbeat interval (Discord specified)
+- websocket gateway URI (Discord specified)
+- websocket connection state (library determined)
+    - unconnected (start here)
+    - connecting
+    - connected 
+        - not identified
+        - identified
+    - disconnected (something went wrong, there could be multiple reasons)
+    - resuming (resuming and connecting are similar but different)
+- last recieved sequence number (dispatch payloads)
+    - starts at 0 (haven't recieved a dispatch yet) and increments up with every dispatch (theoretically)
+    - determined by DISPATCHES, not the library (don't just increment up)
+- pointer to the lws wsi for our current lws connection
+- rate limit data
+    
+## HTTP endpoints
+- /channels/{channel.id}
+    - /messages
+        - /{message.id}
+            - /reactions
+                - /{emoji}
+                    - /@me
+                    - /user.id
+        - /bulk-delete
+    - /permissions/{overwrite.id}
+    - /invites
+    - /typing
+    - /pins
+        - /{message.id}
+    - /recipients/{user.id}
+
+# rate limiting
 ### HTTP rate limits
 - Exceeding the HTTP rate limit will result in a HTTP 429 response code with a retry-after header.
 - There is a global rate limit which is invisible to the client until the client recieves
@@ -73,9 +110,15 @@ HTTP headers:
     route exceeds the rate limit
 - Two routes are "related" if they:
     - are the exact same route
+    - the difference between paths is a non-major parameter
+        - i.e. `GET /channels/1234/messages/12345`, `GET /channels/1234/messages/67890` and 
+        `GET /channels/1234/messages` are related routes
+        - the only major parameters are currently channel.id and guild.id
     - have different HTTP verbs and the same path
 - Two routes are not "related" if:
-    - they have different paths
+    - they have different routes
+    - they differ by a major parameter
+        i.e. `GET /channels/1234/messages/` and `GET /channels/5678/messages` are unrelated routes
 
 - Exceptions:
     - the DELETE /channel/{channel.id}/message/{message.id} route is not related to any other routes, 
@@ -85,37 +128,14 @@ HTTP headers:
 
 
 
-
+### Websocket rate limits
 Exceeding the WSS rate limit leads to a payload with opcode 9 (INVALID_SESSION), closure of the websocket,
  and close code 4008 (rate limited)
-- HTTP
-    
-- websocket
-    - last connection attempt
-        - the client can only attempt to connect to the gateway every 5 sec
-    - last 120 send event time
-        - the client can attempt to send up to 120 payloads in one minute 
-        (on average one every 500 ms)
-    - last 5 game status event times
-        - the client can attempt to send up to 5 game status updates in one minute 
-        (on average one every 12 sec)
-
-## sessiondata
-parameters that stay (more or less) constant or persist throughout the lifetime of the bot
-- bot token (user specified)
-- heartbeat interval (Discord specified)
-- websocket gateway URI (Discord specified)
-- websocket connection state (library determined)
-    - unconnected (start here)
-    - connecting
-    - connected 
-        - not identified
-        - identified
-    - disconnected (something went wrong, there could be multiple reasons)
-    - resuming (resuming and connecting are similar but different)
-- last recieved sequence number (dispatch payloads)
-    - starts at 0 (haven't recieved a dispatch yet) and increments up with every dispatch (theoretically)
-    - determined by DISPATCHES, not the library (don't just increment up)
-- pointer to the lws wsi for our current lws connection
-- rate limit data
-    
+- last connection attempt
+    - the client can only attempt to connect to the gateway every 5 sec
+- last 120 send event time
+    - the client can attempt to send up to 120 payloads in one minute 
+    (on average one every 500 ms)
+- last 5 game status event times
+    - the client can attempt to send up to 5 game status updates in one minute 
+    (on average one every 12 sec)
