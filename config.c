@@ -46,7 +46,7 @@ int ld_config_read_file(struct ld_configdata *cfg) {
         }
         cfg->bot_token = strdup(bot_token);
     } else {
-        printf("config bot token overridden by command line argument\n");
+        printf("using command line argument bot token, ignoring config file bot token\n");
     }
 
     return 0;

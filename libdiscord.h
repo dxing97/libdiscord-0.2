@@ -10,6 +10,11 @@
 #ifndef LIBDISCORDV0_1_LIBDISCORD_H
 #define LIBDISCORDV0_1_LIBDISCORD_H
 
+struct ld_ratelimits{
 
+};
+struct ld_sessiondata {
+
+};
 
 #endif //LIBDISCORDV0_1_LIBDISCORD_H
