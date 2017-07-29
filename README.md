@@ -1,24 +1,24 @@
-#Bot 2
+# Bot 2
 This bot will connect to the Discord gateway, remain connected, and have it's current game set to the name of this library. (libdiscord v0.1.0)
      
-##scopes and stuff
+## scopes and stuff
 
-###library-defined information:
+### library-defined information:
 - library version and name (libdiscord v0.1.0)
   - from CMake
 - API details (Discord API v6) such as what port to use, endpoints, base URLs, etc
      
 
-###user defined information:
+### user defined information:
 - config file location (optional)
 - bot token (required, read from config file/command line option)
 
-###Discord defined information
+### Discord defined information
 (parameters queried/recieved from discord)
 - URI(s) for gateways
 - heartbeat intervals
 
-##how this bot should work
+## how this bot should work
 - get command line options using `getopt`
 - read config file from specified file location (if not specified, will assume a default location)
 - use libconfig to read config file
@@ -35,7 +35,7 @@ This bot will connect to the Discord gateway, remain connected, and have it's cu
         (why would Discord not accept an identify from a valid bot token?)
     - begin heartbeating, and storing (SQL?)/ignoring recieved payloads
     
-##configdata
+## configdata
 struct containing all the possible fields in the config file
 memset this to 0 before using
 - bot_token (optional, if it's not here then it MUST be in the command line args. Can't Discord without a ticket.)
@@ -43,7 +43,7 @@ memset this to 0 before using
     - if NULL, it'll look in the default location: current directory, bot.cfg (./bot.cfg)
 - more later maybe
 
-##sessiondata
+## sessiondata
 parameters that stay (more or less) constant or persist throughout the lifetime of the bot
 - bot token (user specified)
 - heartbeat interval (Discord specified)
