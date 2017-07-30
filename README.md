@@ -72,20 +72,72 @@ parameters that stay (more or less) constant or persist throughout the lifetime 
 - rate limit data
     
 ## HTTP endpoints
-- /channels/{channel.id}
-    - /messages
-        - /{message.id}
-            - /reactions
-                - /{emoji}
-                    - /@me
-                    - /user.id
-        - /bulk-delete
-    - /permissions/{overwrite.id}
-    - /invites
-    - /typing
-    - /pins
-        - /{message.id}
-    - /recipients/{user.id}
+- /gateway
+    - /bot
+- /oauth2*
+    - /applications*
+        - /@me
+- /channels*
+    - /{channel.id}
+        - /messages
+            - /{message.id}
+                - /reactions$
+                    - /{emoji}
+                        - /@me
+                        - /user.id
+            - /bulk-delete
+        - /permissions*
+            - /{overwrite.id}
+        - /invites
+        - /typing
+        - /pins
+            - /{message.id}
+        - /recipients*
+            - /{user.id}
+        - /webhooks
+- /guilds
+    - /{guild.id}
+        - /prune
+        - /regions
+        - /invites
+        - /embed
+        - /integrations
+            - /{integration.id}
+                - /sync
+        - /roles
+            - /{role.id}
+        - /audit-log
+        - /channels
+        - /bans
+            - /{user.id}
+        - /members
+            - /@me*
+                - /nick
+            - /{user.id}
+                - /roles*
+                    - /{role.id}
+        - /webhooks
+- /invites*
+    - /{invite.code}
+- /users*
+    - /@me
+        - /connections
+        - /channels
+        - /guilds
+            - /{guild.id}
+    - /{user.id}
+- /voice*
+    - /regions
+- /webhook*
+    - /{webhook.id}
+        - /{webhook.token}
+            - /slack
+            - /github
+            
+\* not an API endpoint in the docs (should return 404)
+
+$ rate limit exception (see rate limit section)
+    
 
 # rate limiting
 ### HTTP rate limits
