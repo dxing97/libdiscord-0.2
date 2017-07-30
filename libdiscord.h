@@ -10,6 +10,8 @@
 #ifndef LIBDISCORDV0_1_LIBDISCORD_H
 #define LIBDISCORDV0_1_LIBDISCORD_H
 
+#include "libdiscordConfig.h"
+
 struct ld_ratelimits{
 
 };

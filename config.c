@@ -55,5 +55,6 @@ int ld_config_read_file(struct ld_configdata *cfg) {
 
 int ld_config_create_default_config(struct ld_configdata *cfg) {
     cfg->bot_token = NULL;
+    printf("this doesn't work yet\n");
     return 0;
 }

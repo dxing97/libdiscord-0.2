@@ -8,9 +8,11 @@
 
 #include <libconfig.h>
 #include <getopt.h>
-#include "config.h"
 
+#include "config.h"
+#include "libdiscordConfig.h"
 int main(int argc, char *argv[]) {
+    printf("Bot2 startup: using %s v%d.%d.%d\n", LD_NAME, LD_VERSION_MAJOR, LD_VERSION_MINOR, LD_VERSION_PATCH);
     struct ld_configdata cfgdat;
     memset(&cfgdat, 0, sizeof(struct ld_configdata));
     int c;
@@ -53,7 +55,7 @@ int main(int argc, char *argv[]) {
     }
     ld_config_read_file(&cfgdat);
 
-    //note that however we get config data, it MUST be initialized to 0.
+    //note that however we get config data, it MUST be initialized to 0 before the usercode starts putting things in it
 
 
 }

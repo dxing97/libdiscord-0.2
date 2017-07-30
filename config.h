@@ -22,4 +22,5 @@ int ld_config_read_file(struct ld_configdata *cfg);
 
 //todo: create the ld_config_create_default_config function
 int ld_config_create_default_config(struct ld_configdata *cfg);
+
 #endif //LIBDISCORDV0_1_CONFIG_H
