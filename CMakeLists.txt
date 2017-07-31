@@ -21,6 +21,6 @@ set(SOURCE_FILES
         libdiscord.h
         config.h
         config.c
-        libdiscordConfig.h.in)
+        libdiscordConfig.h.in libdiscord.c)
 add_executable(libdiscordv0_1 ${SOURCE_FILES})
 target_link_libraries(libdiscordv0_1 ${LIBS})
