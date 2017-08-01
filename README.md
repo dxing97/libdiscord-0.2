@@ -1,7 +1,9 @@
 # Bot 2
 This bot will connect to the Discord gateway, remain connected, 
     and have it's current game set to the name of this library. (libdiscord v0.1.0 or whatever is in CMakeLists.txt)
-It will then respond to any messages with a magic string 
+It will then respond to any messages with a magic string with the current time in sec since the epoch and 
+library information.
+
 Note that is bot is only compatible with Discord API v6.
 ## scopes and stuff
 
@@ -74,3 +76,15 @@ parameters that stay (more or less) constant or persist throughout the lifetime 
 - pointer to the lws wsi for our current lws connection
 - rate limit data
    
+# Code Snippets
+Sending a HTTP GET request for a bot's user informations:
+
+`
+    struct _u_request *req;
+    struct _u_response rep;
+    ulfius_init_request(req);
+    ulfius_init_response(&rep);
+    req = ld_http_generate_request_string(sd, LD_HTTP_GET, "/users/@me", NULL);
+    ulfius_send_http_request(req, &rep);
+    ld_http_print_response(&rep);
+`

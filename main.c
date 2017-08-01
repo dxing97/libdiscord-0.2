@@ -12,9 +12,11 @@
 #include "libdiscord.h"
 int main(int argc, char *argv[]) {
     printf("Bot2 startup: using %s v%d.%d.%d\n", LD_NAME, LD_VERSION_MAJOR, LD_VERSION_MINOR, LD_VERSION_PATCH);
+
+    int c;
     struct ld_configdata cfgdat;
     memset(&cfgdat, 0, sizeof(struct ld_configdata));
-    int c;
+
     while(1) {
         static struct option long_options[] = {
             {"config-path", required_argument, 0, 'c'},
@@ -52,9 +54,21 @@ int main(int argc, char *argv[]) {
                 exit(1);
         }
     }
-    ld_config_read_file(&cfgdat);
+    c = ld_config_read_file(&cfgdat);
+    if(c != 0){
+        printf("couldn't read and parse config file\n");
+        return 1;
+    }
 
-    //note that however we get config data, it MUST be initialized to 0 before the usercode starts putting things in it
+    struct ld_sessiondata *sd;
+    sd = ld_init_sessiondata(&cfgdat);
+    if(sd == NULL) {
+        printf("error intializing session data\n");
+        return 1;
+    }
 
-    ld_init_sessiondata(&cfgdat);
+    printf("initialized sessiondata\n");
+
+    //hey
+
 }

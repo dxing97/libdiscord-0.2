@@ -5,6 +5,8 @@ set(LD_VERSION_MAJOR 0)
 set(LD_VERSION_MINOR 1)
 set(LD_VERSION_PATCH 0)
 
+set(LD_META libdiscord)
+
 configure_file(
         "${PROJECT_SOURCE_DIR}/libdiscordConfig.h.in"
         "${PROJECT_BINARY_DIR}/libdiscordConfig.h"
@@ -17,10 +19,11 @@ set(LIBS websockets ulfius yder orcania jansson config)
 set(CMAKE_C_STANDARD 99)
 
 set(SOURCE_FILES
+        libdiscord_private.h
         main.c
         libdiscord.h
         config.h
         config.c
-        libdiscordConfig.h.in libdiscord.c libdiscord_private.h http.h http.c json.h json.c)
+        libdiscordConfig.h.in libdiscord.c  http.h http.c json.h json.c errorhandlers.h errorhandlers.c libdiscord_private.c)
 add_executable(libdiscordv0_1 ${SOURCE_FILES})
 target_link_libraries(libdiscordv0_1 ${LIBS})

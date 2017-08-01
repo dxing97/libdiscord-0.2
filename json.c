@@ -11,6 +11,6 @@ void ld_json_errorhandler(json_error_t *error, const char *context) {
         return;
     }
     fprintf(stderr, "JSON error from %s: %s on line %d column %d (position %d)\n"
-            "source: %s\n", context, error->text, error->line, error->column, error->position);
+            "source: %s\n", context, error->text, error->line, error->column, error->position, error->source);
 
 }

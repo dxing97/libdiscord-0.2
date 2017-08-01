@@ -4,7 +4,7 @@
 
 #include "libdiscord.h"
 
-struct ld_sessiondata *ld_init_gateway_bot(struct ld_sessiondata *sd, const char *bot_token) {
+struct ld_sessiondata *ld_init_gateway_bot(struct ld_sessiondata *sd) {
     /*
      * send a GET request to /gateway/bot and determine:
      *  bot token validity
@@ -14,11 +14,13 @@ struct ld_sessiondata *ld_init_gateway_bot(struct ld_sessiondata *sd, const char
     struct _u_request *req;
     struct _u_response rep;
     int ret;
-    req = ld_http_generate_request_string(LD_HTTP_GET, "/gateway/bot", NULL);
+
+    ulfius_init_response(&rep);
+    req = ld_http_generate_request_string(sd, LD_HTTP_GET, "/gateway/bot", NULL);
 
     ret = ulfius_send_http_request(req, &rep);
     if(ret != U_OK || &rep == NULL) {
-        perror("Couldn't send HTTP GET request to /gateway/bot");
+        fprintf(stderr, "Couldn't send HTTP GET request to /gateway/bot: ulfius return code %d\n", ret);
         return NULL;
     }
 
@@ -30,7 +32,6 @@ struct ld_sessiondata *ld_init_gateway_bot(struct ld_sessiondata *sd, const char
     }
 
     //the bot token is valid
-    sd->bot_token = strdup(bot_token);
 
     //parse raw binary data into JSON
     json_t *jbody, *key;
@@ -43,16 +44,30 @@ struct ld_sessiondata *ld_init_gateway_bot(struct ld_sessiondata *sd, const char
 
     key = json_object_get(jbody, "url");
     if(key == NULL) {
-        fprintf(stderr, "couldn't find gateway URL in /gateway/bot response body!n");
+        ld_error_json_dne("gateway bot URL", "/gateway/bot response body");
         return NULL;
     }
 
-    sd.
+    sd->gateway_shard_url = strdup(json_string_value(key));
+    if(sd->gateway_shard_url == NULL) {
+        ld_error_json_dne("gateway bot URL", "string");
+        return NULL;
+    }
 
+    key = json_object_get(jbody, "shards");
+    if(key == NULL) {
+        ld_error_json_dne("gateway shard number", "/gateway/bot response body");
+        return NULL;
+    }
 
+    sd->shard_number = (int) json_integer_value(key);
+    if(sd->shard_number == 0) {
+        //while Discord _could_ return 0 for shard number, that wouldn't make any sense to do so
+        ld_error_json_type("gateway shard number", "integer");
+        return NULL;
+    }
 
-
-
+    return sd;
 }
 
 struct ld_sessiondata *ld_init_sessiondata(struct ld_configdata *cfgdat) {
@@ -66,7 +81,10 @@ struct ld_sessiondata *ld_init_sessiondata(struct ld_configdata *cfgdat) {
         return NULL;
     }
 
-    if(ld_init_gateway_bot(&_sd, cfgdat->bot_token) == NULL) {
-        //token isn't valid
+    _sd.bot_token = strdup(cfgdat->bot_token);
+    if(ld_init_gateway_bot(&_sd) == NULL) {
+        //token isn't valid or something went wrong with the API response
+        fprintf(stderr, "bad response from /gateway/bot\n");
+        return NULL;
     }
 }
