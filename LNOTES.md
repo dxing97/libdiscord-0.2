@@ -1,5 +1,13 @@
 # Library notes
 
+## initializing sessiondata
+What ld_init_sessiondata does:
+- returns:
+    - pointer to sessiondata on success
+    - NULL on failure
+In order of start to finish:
+- Determine the validity of the bot token
+
 ## The Send Queue
 There are two send queues: the websocket queue and the HTTP queue. 
 

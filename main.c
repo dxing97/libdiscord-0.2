@@ -9,8 +9,7 @@
 #include <libconfig.h>
 #include <getopt.h>
 
-#include "config.h"
-#include "libdiscordConfig.h"
+#include "libdiscord.h"
 int main(int argc, char *argv[]) {
     printf("Bot2 startup: using %s v%d.%d.%d\n", LD_NAME, LD_VERSION_MAJOR, LD_VERSION_MINOR, LD_VERSION_PATCH);
     struct ld_configdata cfgdat;
@@ -57,5 +56,5 @@ int main(int argc, char *argv[]) {
 
     //note that however we get config data, it MUST be initialized to 0 before the usercode starts putting things in it
 
-
+    ld_init_sessiondata(&cfgdat);
 }

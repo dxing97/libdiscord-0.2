@@ -10,15 +10,21 @@
 #ifndef LIBDISCORDV0_1_LIBDISCORD_H
 #define LIBDISCORDV0_1_LIBDISCORD_H
 
-#include "libdiscordConfig.h"
+#include "config.h"
+#include "http.h"
+#include "json.h"
 
+#include "libdiscordConfig.h"
+#include "libdiscord_private.h"
 /*
  * a struct containing all information needed to maintain a bot connection to discord
  */
 struct ld_sessiondata {
     char *bot_token;
-    char *
+    char *gateway_url;
+    char *gateway_shard_url;
 };
+
 
 
 /*
@@ -27,6 +33,10 @@ struct ld_sessiondata {
  * allocate memory for our global sessiondata variable
  * initialize send queue for websockets and HTTP
  */
-struct ld_sessiondata *ld_init_session(struct ld_configdata);
+struct ld_sessiondata *ld_init_sessiondata(struct ld_configdata *cfgdat);
 
+/*
+ * sends GET request to /gateway/bot and checks for valid response
+ */
+struct ld_sessiondata * ld_init_gateway_bot(struct ld_sessiondata *sd, const char *bot_token);
 #endif //LIBDISCORDV0_1_LIBDISCORD_H

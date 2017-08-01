@@ -57,6 +57,7 @@ there is a WSS and a HTTP rate limit.
 ## sessiondata
 parameters that stay (more or less) constant or persist throughout the lifetime of the bot
 - bot token (user specified)
+- shard number (Discord specified)
 - heartbeat interval (Discord specified)
 - websocket gateway URI (Discord specified)
 - websocket connection state (library determined)
