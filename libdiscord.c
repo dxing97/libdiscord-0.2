@@ -11,6 +11,8 @@ struct ld_sessiondata *ld_init_gateway_bot(struct ld_sessiondata *sd) {
      *  gateway URI
      *  shard number
      */
+
+    TAILQ_HEAD(, ld_hsq_entry) hsq_head;
     struct _u_request *req;
     struct _u_response rep;
     int ret;
@@ -66,6 +68,9 @@ struct ld_sessiondata *ld_init_gateway_bot(struct ld_sessiondata *sd) {
         ld_error_json_type("gateway shard number", "integer");
         return NULL;
     }
+
+    //Initialize the HTTP Send Queue (HSQ)
+    TAILQ_INIT(&hsq_head);
 
     return sd;
 }

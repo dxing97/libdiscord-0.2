@@ -7,6 +7,14 @@
 
 #include "libdiscord.h"
 #include <ulfius.h>
+#include <sys/queue.h>
+
+
+struct ld_hsq_entry {
+    int verb;
+    /* HTTP send queue informations go above */
+    TAILQ_ENTRY(ld_hsq_entry) entries;
+};
 
 enum ld_http_verb {
     LD_HTTP_ERROR = -1,

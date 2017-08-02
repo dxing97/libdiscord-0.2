@@ -38,3 +38,12 @@ strings.
 The request maker function is responsible for attaching the two headers required for all requests: 
 the Authorization header 
 containing the bot token and the User-Agent header, which specifies the client library and version number. 
+
+The send queue is initialized empty. 
+
+## The service loop
+
+In the main bot code, use an infinite loop to call ld_service, which sends any HTTP requests that need to be sent,
+and any websocket payloads that need to be sent, while respecting ratelimits. 
+
+How does the bot coder use HTTP requests? Is calling a service function recursively really a good idea?

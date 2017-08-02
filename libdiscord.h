@@ -11,16 +11,19 @@
 #define LIBDISCORDV0_1_LIBDISCORD_H
 
 #define LD_API_BASE_URL "https://discordapp.com/api/v6"
+#include "http.h"
 
 struct ld_sessiondata {
     char *bot_token;
     char *gateway_url;
     char *gateway_shard_url;
     int shard_number;
+    TAILQ_HEAD(, ld_hsq_entry) ld_hsq_head;
+    //HSQ (HTTP send queue)
 };
 
 #include "config.h"
-#include "http.h"
+
 #include "json.h"
 #include "errorhandlers.h"
 
@@ -44,4 +47,6 @@ struct ld_sessiondata *ld_init_sessiondata(struct ld_configdata *cfgdat);
  * sessiondata must already have the bot token initialized
  */
 struct ld_sessiondata * ld_init_gateway_bot(struct ld_sessiondata *sd);
+
+
 #endif //LIBDISCORDV0_1_LIBDISCORD_H

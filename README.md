@@ -31,7 +31,8 @@ Note that is bot is only compatible with Discord API v6.
     - import data from ld_configdata
     - check validity of the bot token here
         - intialize some rate limit parameters as well 
-    - initialize the HTTP and websocket send queues
+    - initialize the HTTP send queue
+    - initialize the websocket send queue
     - if bot token is invalid, kill the bot (~~maybe ask the user to input a new token?~~ notify the user that the bot 
     token is invalid)
     - if _ANYTHING_ is bad/invalid/not what we expected, kill the bot (with appropriate error message)

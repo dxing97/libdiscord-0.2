@@ -1,4 +1,5 @@
- 
+# Discord API Notes
+
 ## HTTP endpoints
 - /gateway
     - /bot
