@@ -3,6 +3,51 @@
 //
 
 #include "libdiscord.h"
+struct ld_sessiondata *ld_init_gateway(struct ld_sessiondata *sd) {
+    struct _u_response rep;
+    struct _u_request *req;
+    int ret;
+    req = malloc(sizeof(struct _u_request));
+    ulfius_init_response(&rep);
+    ulfius_init_request(req);
+
+    req = ld_http_generate_request_string(sd, LD_HTTP_GET, "/gateway", NULL);
+
+    ret = ulfius_send_http_request(req, &rep);
+    if(ret != U_OK || &rep == NULL) {
+        fprintf(stderr, "couldn't send HTTP GET request to /gateway/bot: ulfius return code %d\n", ret);
+        return NULL;
+    }
+
+    ld_http_print_response(&rep);
+    if(rep.status != 200) {
+        fprintf(stderr, "Recieved non-200(%ld) response from Discord\n:", rep.status);
+        return NULL;
+    }
+
+    json_t *url, *body;
+    json_error_t error;
+
+    body = json_loadb(rep.binary_body, rep.binary_body_length, 0, &error);
+    if(body == NULL) {
+        ld_json_errorhandler(&error, "GET /gateway");
+        return NULL;
+    }
+    url = json_object_get(body, "url");
+    if(url == NULL) {
+        ld_error_json_dne("gateway URL", "GET /gateway response body");
+        return NULL;
+    }
+
+    sd->gateway_url = strdup(json_string_value(url));
+    if(sd->gateway_url == NULL) {
+        ld_error_json_type("gateway URL", "string");
+        return NULL;
+    }
+
+
+    return sd;
+}
 
 struct ld_sessiondata *ld_init_gateway_bot(struct ld_sessiondata *sd) {
     /*
@@ -28,7 +73,7 @@ struct ld_sessiondata *ld_init_gateway_bot(struct ld_sessiondata *sd) {
 
     ld_http_print_response(&rep);
 
-    if(rep.status != 200) {
+    if(rep.status > 299) {
         fprintf(stderr, "Recieved non-200(%ld) response from Discord: is the bot token valid?\n", rep.status);
         return NULL;
     }
@@ -52,7 +97,7 @@ struct ld_sessiondata *ld_init_gateway_bot(struct ld_sessiondata *sd) {
 
     sd->gateway_shard_url = strdup(json_string_value(key));
     if(sd->gateway_shard_url == NULL) {
-        ld_error_json_dne("gateway bot URL", "string");
+        ld_error_json_type("gateway bot URL", "string");
         return NULL;
     }
 
@@ -92,4 +137,23 @@ struct ld_sessiondata *ld_init_sessiondata(struct ld_configdata *cfgdat) {
         fprintf(stderr, "bad response from /gateway/bot\n");
         return NULL;
     }
+
+    if(ld_init_gateway(&_sd) == NULL) {
+        fprintf(stderr, "bad response from /gateway\n");
+        return NULL;
+    }
+
+    if(ld_init_lws(&_sd) == NULL) {
+        fprintf(stderr, "couldn't initialize lws\n");
+        return NULL;
+    }
+
+    return &_sd;
+}
+int ld_begin(struct ld_sessiondata *sd) {
+    //open the websocket connection and return the lws
+    ;
+}
+void ld_close_sessiondata(struct ld_sessiondata *sd) {
+    ;
 }

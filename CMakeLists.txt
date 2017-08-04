@@ -5,6 +5,13 @@ set(LD_VERSION_MAJOR 0)
 set(LD_VERSION_MINOR 1)
 set(LD_VERSION_PATCH 0)
 
+#number of seconds between connection attempts to the gateway (min allowed by Discord is 5)
+set(LD_GATEWAY_CONNECTION_LIMIT 6)
+#number of payloads that can be sent in a minute (max allowed by Discord is 120)
+set(LD_GATEWAY_SEND_LIMIT 100)
+#number of times that a game status update payload can be sent in one minute (max allowed by Discord is 5)
+set(LD_GATEWAY_GAME_UPDATE_SEND_LIMIT 4)
+
 set(LD_META libdiscord)
 
 configure_file(
@@ -24,6 +31,6 @@ set(SOURCE_FILES
         libdiscord.h
         config.h
         config.c
-        libdiscordConfig.h.in libdiscord.c  http.h http.c json.h json.c errorhandlers.h errorhandlers.c libdiscord_private.c)
+        libdiscordConfig.h.in libdiscord.c  http.h http.c json.h json.c errorhandlers.h errorhandlers.c libdiscord_private.c ratelimit.c ratelimit.h websocket.c websocket.h)
 add_executable(libdiscordv0_1 ${SOURCE_FILES})
 target_link_libraries(libdiscordv0_1 ${LIBS})

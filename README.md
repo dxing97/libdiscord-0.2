@@ -1,8 +1,8 @@
 # Bot 2
 This bot will connect to the Discord gateway, remain connected, 
     and have it's current game set to the name of this library. (libdiscord v0.1.0 or whatever is in CMakeLists.txt)
-It will then respond to any messages with a magic string with the current time in sec since the epoch and 
-library information.
+It will then respond to any messages in channel #singular-one with a magic string (respond) with the 
+current time and library information.
 
 Note that is bot is only compatible with Discord API v6.
 ## scopes and stuff

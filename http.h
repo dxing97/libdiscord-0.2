@@ -7,7 +7,6 @@
 
 #include "libdiscord.h"
 #include <ulfius.h>
-#include <sys/queue.h>
 
 
 struct ld_hsq_entry {

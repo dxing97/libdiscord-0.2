@@ -8,10 +8,22 @@
 
 #include <libconfig.h>
 #include <getopt.h>
+#include <signal.h>
 
 #include "libdiscord.h"
+
+static int force_exit = 0;
+static void interupt_handler(int signum) {
+    force_exit = 1;
+}
+
 int main(int argc, char *argv[]) {
     printf("Bot2 startup: using %s v%d.%d.%d\n", LD_NAME, LD_VERSION_MAJOR, LD_VERSION_MINOR, LD_VERSION_PATCH);
+
+    if(signal(SIGINT, interupt_handler) == SIG_ERR) {
+        fprintf(stderr, "couldn't set signal handler for SIGINT\n");
+        return 1;
+    }
 
     int c;
     struct ld_configdata cfgdat;
@@ -69,6 +81,13 @@ int main(int argc, char *argv[]) {
 
     printf("initialized sessiondata\n");
 
-    //hey
+    //begin looping
+    while(!force_exit) {
+        ;
+    }
+
+    ld_close_sessiondata(sd);
+    return 0;
+
 
 }
