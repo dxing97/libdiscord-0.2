@@ -2,6 +2,8 @@
 // Created by dxing97 on 7/28/17.
 //
 #include "config.h"
+
+
 int ld_config_read_file(struct ld_configdata *cfg) {
     config_t conf;
     config_init(&conf);
@@ -18,9 +20,10 @@ int ld_config_read_file(struct ld_configdata *cfg) {
     }
 
     if (config_read_file(&conf, path) == CONFIG_FALSE) {
-        perror("error opening config");
-        config_error_text(&conf);
-        config_error_type(&conf);
+        printf("%s\n", path);
+        printf("error opening config");
+        printf("%s\n", config_error_text(&conf));
+        printf("type: %d\n",config_error_type(&conf));
 
         if(access(path, F_OK) == -1) {
             printf("create template config file at %s?[Y/n]:", path);
