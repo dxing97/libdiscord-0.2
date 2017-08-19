@@ -87,5 +87,5 @@ Sending a HTTP GET request for a bot's user informations:
     ulfius_init_response(&rep);
     req = ld_http_generate_request_string(sd, LD_HTTP_GET, "/users/@me", NULL);
     ulfius_send_http_request(req, &rep);
-    ld_http_print_response(&rep);
+    ld_http_print_response(sd, &rep);
 `

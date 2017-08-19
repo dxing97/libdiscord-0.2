@@ -13,14 +13,14 @@ int ld_config_read_file(struct ld_configdata *cfg) {
     const char *bot_token;
 
     if(cfg->config_path == NULL) {
-        printf("config path not specified, using default (bot.cfg)\n");
+        fprintf(stderr, "config path not specified, using default (bot.cfg)\n");
         path = default_path;
     } else {
         path = cfg->config_path;
     }
 
     if (config_read_file(&conf, path) == CONFIG_FALSE) {
-        printf("%s\n", path);
+//        printf("%s\n", path);
         printf("error opening config");
         printf("%s\n", config_error_text(&conf));
         printf("type: %d\n",config_error_type(&conf));

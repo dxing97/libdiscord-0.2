@@ -14,12 +14,12 @@ struct ld_sessiondata *ld_init_gateway(struct ld_sessiondata *sd) {
     req = ld_http_generate_request_string(sd, LD_HTTP_GET, "/gateway", NULL);
 
     ret = ulfius_send_http_request(req, &rep);
-    if(ret != U_OK || &rep == NULL) {
+    if(ret != U_OK) {
         fprintf(stderr, "couldn't send HTTP GET request to /gateway/bot: ulfius return code %d\n", ret);
         return NULL;
     }
 
-    ld_http_print_response(&rep);
+    ld_http_print_response(sd, &rep);
     if(rep.status != 200) {
         fprintf(stderr, "Recieved non-200(%ld) response from Discord\n:", rep.status);
         return NULL;
@@ -30,18 +30,18 @@ struct ld_sessiondata *ld_init_gateway(struct ld_sessiondata *sd) {
 
     body = json_loadb(rep.binary_body, rep.binary_body_length, 0, &error);
     if(body == NULL) {
-        ld_json_errorhandler(&error, "GET /gateway");
+        ld_json_errorhandler(sd, &error, "GET /gateway");
         return NULL;
     }
     url = json_object_get(body, "url");
     if(url == NULL) {
-        ld_error_json_dne("gateway URL", "GET /gateway response body");
+        ld_error_json_dne(sd, "gateway URL", "GET /gateway response body");
         return NULL;
     }
 
     sd->gateway_url = strdup(json_string_value(url));
     if(sd->gateway_url == NULL) {
-        ld_error_json_type("gateway URL", "string");
+        ld_error_json_type(sd, "gateway URL", "string");
         return NULL;
     }
 
@@ -66,12 +66,12 @@ struct ld_sessiondata *ld_init_gateway_bot(struct ld_sessiondata *sd) {
     req = ld_http_generate_request_string(sd, LD_HTTP_GET, "/gateway/bot", NULL);
 
     ret = ulfius_send_http_request(req, &rep);
-    if(ret != U_OK || &rep == NULL) {
+    if(ret != U_OK) {
         fprintf(stderr, "Couldn't send HTTP GET request to /gateway/bot: ulfius return code %d\n", ret);
         return NULL;
     }
 
-    ld_http_print_response(&rep);
+    ld_http_print_response(sd, &rep);
 
     if(rep.status > 299) {
         fprintf(stderr, "Recieved non-200(%ld) response from Discord: is the bot token valid?\n", rep.status);
@@ -85,32 +85,32 @@ struct ld_sessiondata *ld_init_gateway_bot(struct ld_sessiondata *sd) {
     json_error_t error;
     jbody = json_loadb(rep.binary_body, rep.binary_body_length, 0, &error);
     if(jbody == NULL) {
-        ld_json_errorhandler(&error, "GET /gateway/bot");
+        ld_json_errorhandler(sd, &error, "GET /gateway/bot");
         return NULL;
     }
 
     key = json_object_get(jbody, "url");
     if(key == NULL) {
-        ld_error_json_dne("gateway bot URL", "/gateway/bot response body");
+        ld_error_json_dne(sd, "gateway bot URL", "/gateway/bot response body");
         return NULL;
     }
 
     sd->gateway_shard_url = strdup(json_string_value(key));
     if(sd->gateway_shard_url == NULL) {
-        ld_error_json_type("gateway bot URL", "string");
+        ld_error_json_type(sd, "gateway bot URL", "string");
         return NULL;
     }
 
     key = json_object_get(jbody, "shards");
     if(key == NULL) {
-        ld_error_json_dne("gateway shard number", "/gateway/bot response body");
+        ld_error_json_dne(sd, "gateway shard number", "/gateway/bot response body");
         return NULL;
     }
 
     sd->shard_number = (int) json_integer_value(key);
     if(sd->shard_number == 0) {
         //while Discord _could_ return 0 for shard number, that wouldn't make any sense to do so
-        ld_error_json_type("gateway shard number", "integer");
+        ld_error_json_type(sd, "gateway shard number", "integer");
         return NULL;
     }
 
@@ -121,30 +121,35 @@ struct ld_sessiondata *ld_init_gateway_bot(struct ld_sessiondata *sd) {
 }
 
 struct ld_sessiondata *ld_init_sessiondata(struct ld_configdata *cfgdat) {
+
+
     /*
      * determine validity of bot token, retrieve the gateway URI and shard number.
      */
     memset(&_sd, 0, sizeof(struct ld_sessiondata));
 
+    //set log level
+    _sd.log_level = cfgdat->log_level;
+
     if(cfgdat->bot_token == NULL) {
-        fprintf(stderr, "bot token not specified\n");
+        ld_log(ld_error, &_sd, "bot token not specified\n");
         return NULL;
     }
 
     _sd.bot_token = strdup(cfgdat->bot_token);
     if(ld_init_gateway_bot(&_sd) == NULL) {
         //token isn't valid or something went wrong with the API response
-        fprintf(stderr, "bad response from /gateway/bot\n");
+        ld_log(ld_error, &_sd, "bad response from /gateway/bot\n");
         return NULL;
     }
 
     if(ld_init_gateway(&_sd) == NULL) {
-        fprintf(stderr, "bad response from /gateway\n");
+        ld_log(ld_error, &_sd, "bad response from /gateway\n");
         return NULL;
     }
 
     if(ld_init_lws(&_sd) == NULL) {
-        fprintf(stderr, "couldn't initialize lws\n");
+        ld_log(ld_error, &_sd, "couldn't initialize lws\n");
         return NULL;
     }
 
@@ -152,7 +157,7 @@ struct ld_sessiondata *ld_init_sessiondata(struct ld_configdata *cfgdat) {
 }
 int ld_begin(struct ld_sessiondata *sd) {
     //open the websocket connection and return the lws
-    ;
+    return 0;
 }
 void ld_close_sessiondata(struct ld_sessiondata *sd) {
     ;

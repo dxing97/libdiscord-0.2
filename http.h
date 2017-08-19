@@ -27,7 +27,7 @@ enum ld_http_verb {
 /*
  * prints the raw HTTP response
  */
-void ld_http_print_response(const struct _u_response *rep);
+void ld_http_print_response(struct ld_sessiondata *sd, const struct _u_response *rep);
 /*
  * generates a HTTP request to Discord. Doesn't send the request: put it in the send queue or call ulfius directly.
  */

@@ -49,7 +49,7 @@ struct ld_sessiondata *ld_init_lws(struct ld_sessiondata *sd) {
 
     ret = lws_create_context(&info);
     if(ret == NULL) {
-        fprintf(stderr, "couldn't create LWS context\n");
+        ld_log(ld_error, sd, "couldn't create LWS context\n");
         return NULL;
     }
     sd->ws_context = ret;

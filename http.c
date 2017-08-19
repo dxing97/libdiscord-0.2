@@ -32,7 +32,7 @@ char * print_map(const struct _u_map * map) {
 
 }
 
-void ld_http_print_response(const struct _u_response *rep) {
+void ld_http_print_response(struct ld_sessiondata *sd, const struct _u_response *rep) {
     if(rep != NULL) {
         char *headers = print_map(rep->map_header);
 
@@ -40,7 +40,7 @@ void ld_http_print_response(const struct _u_response *rep) {
         strncpy(body, rep->binary_body, rep->binary_body_length);
         body[rep->binary_body_length] = '\0';
 
-        printf("HTTP RESPONSE:\n"
+        ld_log(ld_debug, sd, "HTTP RESPONSE:\n"
                        "%s\n\n"
                        "%s\n\n"
                        "%s\n"
@@ -79,12 +79,12 @@ struct _u_request *ld_http_generate_request_string(struct ld_sessiondata *sd, en
             break;
         case LD_HTTP_ERROR:
         default:
-            fprintf(stderr, "invalid HTTP verb (%d)", verb);
+            ld_log(ld_warning, sd, "invalid HTTP verb (%d)", verb);
             return NULL;
     }
 
     if(path == NULL) {
-        fprintf(stderr, "path not specified\n");
+        ld_log(ld_warning, sd, "path not specified\n");
         return NULL;
     }
     tmp = malloc(strlen(path) + strlen(LD_API_BASE_URL) + 1);
@@ -108,15 +108,15 @@ struct _u_request *ld_http_generate_request_string(struct ld_sessiondata *sd, en
     u_map_copy_into(req->map_header, &headers);
 
     if(body != NULL && (verb == LD_HTTP_GET || verb == LD_HTTP_DELETE)) {
-        fprintf(stderr, "request verb (%d) given unexpected HTTP body to send\n", verb);
+        ld_log(ld_warning, sd, "request verb (%d) given unexpected HTTP body to send\n", verb);
     }
     //the body MUST be encoded in UTF-8 for this to work
     if (body != NULL) {
         req->binary_body = strdup(body);
         req->binary_body_length = strlen(body);
     }
-
-//    printf("headers: %s\n", print_map(req->map_header));
+    printf("current log level: %d\n", sd->log_level);
+    ld_log(ld_debug, sd, "headers: %s\n", print_map(req->map_header));
 
     return req;
 }

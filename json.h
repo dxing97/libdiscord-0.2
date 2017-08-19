@@ -6,5 +6,7 @@
 #define LIBDISCORDV0_1_JSON_H
 
 #include <jansson.h>
-void ld_json_errorhandler(json_error_t *error, const char *context);
+#include "libdiscord.h"
+
+void ld_json_errorhandler(struct ld_sessiondata *sd, json_error_t *error, const char *context);
 #endif //LIBDISCORDV0_1_JSON_H

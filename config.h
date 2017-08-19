@@ -10,13 +10,15 @@
 #include <unistd.h>
 #include <stdlib.h>
 #include <string.h>
-#include "config.h"
 
 struct ld_configdata {
     char *bot_token;
     char *config_path;
+    unsigned int log_level;
     //more later
 };
+
+#include "libdiscord.h"
 
 int ld_config_read_file(struct ld_configdata *cfg);
 

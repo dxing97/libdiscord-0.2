@@ -30,13 +30,14 @@ struct ld_sessiondata {
     TAILQ_HEAD(, ld_hsq_entry) ld_hsq_head;
     long last_gateway_connect;
     struct lws_context *ws_context;
+    unsigned int log_level;
 };
 #include "http.h"
 #include "websocket.h"
 #include "config.h"
 
 #include "json.h"
-#include "errorhandlers.h"
+#include "logging.h"
 
 #include "libdiscordConfig.h"
 #include "libdiscord_private.h"

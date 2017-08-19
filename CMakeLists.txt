@@ -31,6 +31,9 @@ set(SOURCE_FILES
         libdiscord.h
         config.h
         config.c
-        libdiscordConfig.h.in libdiscord.c  http.h http.c json.h json.c errorhandlers.h errorhandlers.c libdiscord_private.c ratelimit.c ratelimit.h websocket.c websocket.h)
-add_executable(libdiscordv0_1 ${SOURCE_FILES})
+        libdiscordConfig.h.in libdiscord.c  http.h http.c json.h json.c logging.h logging.c libdiscord_private.c ratelimit.c ratelimit.h websocket.c websocket.h)
+add_executable(libdiscordv0_1 ${SOURCE_FILES} )
+
+target_compile_options(libdiscordv0_1 PRIVATE "-Wall")
+target_compile_options(libdiscordv0_1 PRIVATE "-Werror")
 target_link_libraries(libdiscordv0_1 ${LIBS})

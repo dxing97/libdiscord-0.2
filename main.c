@@ -29,17 +29,20 @@ int main(int argc, char *argv[]) {
     struct ld_configdata cfgdat;
     memset(&cfgdat, 0, sizeof(struct ld_configdata));
 
+    cfgdat.log_level = 31;
+
     while(1) {
         static struct option long_options[] = {
             {"config-path", required_argument, 0, 'c'},
             {"bot-token", required_argument, 0, 'b'},
             {"help", no_argument, 0, 'h'},
+            {"log-level", required_argument, 0, 'l'},
             {0,0,0,0}
         };
 
         int option_index = 0;
 
-        c = getopt_long(argc, argv, "b:c:h", long_options, &option_index);
+        c = getopt_long(argc, argv, "b:c:hl:", long_options, &option_index);
         if(c == -1)
             break;
 
@@ -61,6 +64,10 @@ int main(int argc, char *argv[]) {
                                "-h, --help\n\t\t"
                                    "displays this help dialog\n", argv[0]);
                 return 0;
+            case 'l':
+                cfgdat.log_level = (unsigned) atoi(optarg);
+                printf("using log level %u\n", cfgdat.log_level);
+                break;
             default:
                 fprintf(stdout, "use --help for options\n");
                 exit(1);
@@ -73,6 +80,7 @@ int main(int argc, char *argv[]) {
     }
 
     struct ld_sessiondata *sd;
+    printf("log level in cfgdat before init_sessiondata: %d\n", cfgdat.log_level);
     sd = ld_init_sessiondata(&cfgdat);
     if(sd == NULL) {
         printf("error intializing session data\n");
@@ -83,7 +91,9 @@ int main(int argc, char *argv[]) {
 
     //begin looping
     while(!force_exit) {
-        ;
+        sleep(5);
+        ld_log(ld_notice, sd, "slept for 5 seconds, exiting");
+        break;
     }
 
     ld_close_sessiondata(sd);
