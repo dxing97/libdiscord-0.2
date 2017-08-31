@@ -6,6 +6,14 @@
 
 int _ld_ws_callback(struct lws *wsi, enum lws_callback_reasons reason,
                     void *user, void *in, size_t len) {
+    struct ld_sessiondata *sd = user;
+
+    switch(reason) {
+        default:
+            ld_log(ld_debug, sd, "unhandled lws callback reason: %d", reason);
+            break;
+    }
+
     return 0;
 }
 
@@ -36,6 +44,8 @@ struct ld_sessiondata *ld_init_lws(struct ld_sessiondata *sd) {
     struct lws_context *ret;
     struct lws_context_creation_info info;
     memset(&info, 0, sizeof(info));
+
+    lws_set_log_level(sd->log_level, NULL);
 
     info.port = CONTEXT_PORT_NO_LISTEN;
     info.protocols = protocols;

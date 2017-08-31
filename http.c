@@ -115,8 +115,8 @@ struct _u_request *ld_http_generate_request_string(struct ld_sessiondata *sd, en
         req->binary_body = strdup(body);
         req->binary_body_length = strlen(body);
     }
-    printf("current log level: %d\n", sd->log_level);
-    ld_log(ld_debug, sd, "headers: %s\n", print_map(req->map_header));
+
+    ld_log(ld_debug, sd, "HTTP Request Headers:\n%s", print_map(req->map_header));
 
     return req;
 }

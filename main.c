@@ -91,6 +91,20 @@ int main(int argc, char *argv[]) {
 
     //begin looping
     while(!force_exit) {
+        /*
+        switch(sd.gsd.state) {
+            case LD_GATEWAY_UNCONNECTED:
+                start a connection
+            case LD_GATEWAY_DISCONNECTED:
+                depending on the context, start a connection, wait, or something else
+            case  LD_GATEWAY_CONNECTING:
+                do nothing(?)
+            case LD_GATEWAY_CONNECTED:
+                write, read, heartbeat, etc.
+            default
+                hueh? probably exit
+        }
+         */
         sleep(5);
         ld_log(ld_notice, sd, "slept for 5 seconds, exiting");
         break;

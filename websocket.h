@@ -10,8 +10,15 @@
 /*
  * lws callback
  */
+enum connectionstate {
+    LD_GATEWAY_UNCONNECTED = 0,
+    LD_GATEWAY_DISCONNECTED = 1,
+    LD_GATEWAY_CONNECTING = 2,
+    LD_GATEWAY_CONNECTED = 3
+};
 
 struct ld_lws_sessiondata {
+    enum connectionstate state;
     unsigned char buf[LWS_PRE + LD_MAX_DISCORD_PAYLOAD];
 };
 

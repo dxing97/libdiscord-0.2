@@ -132,24 +132,24 @@ struct ld_sessiondata *ld_init_sessiondata(struct ld_configdata *cfgdat) {
     _sd.log_level = cfgdat->log_level;
 
     if(cfgdat->bot_token == NULL) {
-        ld_log(ld_error, &_sd, "bot token not specified\n");
+        ld_log(ld_error, &_sd, "bot token not specified");
         return NULL;
     }
 
     _sd.bot_token = strdup(cfgdat->bot_token);
     if(ld_init_gateway_bot(&_sd) == NULL) {
         //token isn't valid or something went wrong with the API response
-        ld_log(ld_error, &_sd, "bad response from /gateway/bot\n");
+        ld_log(ld_error, &_sd, "bad response from /gateway/bot");
         return NULL;
     }
 
     if(ld_init_gateway(&_sd) == NULL) {
-        ld_log(ld_error, &_sd, "bad response from /gateway\n");
+        ld_log(ld_error, &_sd, "bad response from /gateway");
         return NULL;
     }
 
     if(ld_init_lws(&_sd) == NULL) {
-        ld_log(ld_error, &_sd, "couldn't initialize lws\n");
+        ld_log(ld_error, &_sd, "couldn't initialize lws");
         return NULL;
     }
 

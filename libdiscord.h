@@ -31,6 +31,7 @@ struct ld_sessiondata {
     long last_gateway_connect;
     struct lws_context *ws_context;
     unsigned int log_level;
+    struct ld_lws_sessiondata gsd;
 };
 #include "http.h"
 #include "websocket.h"

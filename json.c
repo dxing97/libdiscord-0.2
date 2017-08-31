@@ -11,7 +11,7 @@ void ld_json_errorhandler(struct ld_sessiondata *sd, json_error_t *error, const 
         perror("errorhandler called but no error\n");
         return;
     }
-    ld_log(ld_warning, sd, "JSON error from %s: %s on line %d column %d (position %d)\n"
+    ld_log(ld_warning, sd, "JSON error from %s: %s on line %d column %d (position %d)"
             "source: %s\n", context, error->text, error->line, error->column, error->position, error->source);
 
 }
