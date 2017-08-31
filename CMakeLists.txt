@@ -5,6 +5,9 @@ set(LD_VERSION_MAJOR 0)
 set(LD_VERSION_MINOR 1)
 set(LD_VERSION_PATCH 0)
 
+set(LD_API_VERSION 6)
+set(LD_GATEWAY_ENCODING "encoding=json")
+
 #number of seconds between connection attempts to the gateway (min allowed by Discord is 5)
 set(LD_GATEWAY_CONNECTION_LIMIT 6)
 #number of payloads that can be sent in a minute (max allowed by Discord is 120)

@@ -153,10 +153,48 @@ struct ld_sessiondata *ld_init_sessiondata(struct ld_configdata *cfgdat) {
         return NULL;
     }
 
+    _sd.gsd.state = LD_GATEWAY_UNCONNECTED;
+
     return &_sd;
 }
 int ld_begin(struct ld_sessiondata *sd) {
     //open the websocket connection and return the lws
+    struct lws_client_connect_info info;
+    memset(&info, 0, sizeof(struct lws_client_connect_info));
+
+    //todo: generate context and connection info
+    info.context  = sd->ws_context;
+
+    if(strspn(sd->gateway_shard_url, "wss://") == 6)
+        info.address = strdup(sd->gateway_shard_url + 6);
+    else
+        info.address = strdup(sd->gateway_shard_url);
+
+    char *ads_port;
+    ads_port = malloc((strlen(info.address) + 10) * sizeof(char));
+    sprintf(ads_port, "%s:%u", info.address, 443&65535);
+    info.port = 443;
+    info.ssl_connection = 1;
+    info.path = "/?v="
+    /*
+    char *ads_port;
+    ads_port = malloc((strlen(gateway_url) + 6) * sizeof(char));
+    sprintf(ads_port, "%s:%u", gateway_url, 443 & 65535);
+
+    if(strspn(gateway_url, "wss://") == 6)
+        i->address = strdup(gateway_url + 6);
+    else
+        i->address = strdup(gateway_url);
+
+    i->context = context;
+    i->port = 443;
+    i->ssl_connection = 1;
+    i->path = "/?v=" LD_DISCORDAPI_VERSION "&encoding=" LD_DISCORDAPI_WSENCODING;//"/?v=6&encoding=json"
+    i->host = ads_port;
+    i->origin = ads_port;
+    i->protocol = protocols[0].name;
+     */
+    lws_client_connect_via_info()
     return 0;
 }
 void ld_close_sessiondata(struct ld_sessiondata *sd) {
