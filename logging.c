@@ -63,7 +63,7 @@ void ld_log(enum ld_loglevel ll, struct ld_sessiondata *sd, const char *log_mess
     }
 
     message = malloc(strlen(time_string) + strlen(ld_loglevel_string(ll)) + strlen(msg) + 15);
-    sprintf(message, "[%s] LD_%s: %s\n", time_string, ld_loglevel_string(ll), msg);
+    sprintf(message, "[%s] LD_%s: %s", time_string, ld_loglevel_string(ll), msg);
     fprintf(stderr, "%s\n", message);
 
 

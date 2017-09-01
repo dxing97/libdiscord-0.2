@@ -4,5 +4,4 @@
 
 #include "libdiscord.h"
 
-struct ld_sessiondata _sd = {
-};
+struct ld_sessiondata *_sd = NULL;

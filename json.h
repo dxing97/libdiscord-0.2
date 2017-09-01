@@ -8,5 +8,8 @@
 #include <jansson.h>
 #include "libdiscord.h"
 
+json_t *ld_json_create_identify(struct ld_sessiondata *sd);
+
+
 void ld_json_errorhandler(struct ld_sessiondata *sd, json_error_t *error, const char *context);
 #endif //LIBDISCORDV0_1_JSON_H

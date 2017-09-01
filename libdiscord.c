@@ -126,77 +126,47 @@ struct ld_sessiondata *ld_init_sessiondata(struct ld_configdata *cfgdat) {
     /*
      * determine validity of bot token, retrieve the gateway URI and shard number.
      */
-    memset(&_sd, 0, sizeof(struct ld_sessiondata));
+    _sd = malloc(sizeof(struct ld_sessiondata));
+    memset(_sd, 0, sizeof(struct ld_sessiondata));
 
     //set log level
-    _sd.log_level = cfgdat->log_level;
+    _sd->log_level = cfgdat->log_level;
 
     if(cfgdat->bot_token == NULL) {
-        ld_log(ld_error, &_sd, "bot token not specified");
+        ld_log(ld_error, _sd, "bot token not specified");
         return NULL;
     }
 
-    _sd.bot_token = strdup(cfgdat->bot_token);
-    if(ld_init_gateway_bot(&_sd) == NULL) {
+    _sd->bot_token = strdup(cfgdat->bot_token);
+    if(ld_init_gateway_bot(_sd) == NULL) {
         //token isn't valid or something went wrong with the API response
-        ld_log(ld_error, &_sd, "bad response from /gateway/bot");
+        ld_log(ld_error, _sd, "bad response from /gateway/bot");
         return NULL;
     }
 
-    if(ld_init_gateway(&_sd) == NULL) {
-        ld_log(ld_error, &_sd, "bad response from /gateway");
+    if(ld_init_gateway(_sd) == NULL) {
+        ld_log(ld_error, _sd, "bad response from /gateway");
         return NULL;
     }
 
-    if(ld_init_lws(&_sd) == NULL) {
-        ld_log(ld_error, &_sd, "couldn't initialize lws");
+    if(ld_init_lws(_sd) == NULL) {
+        ld_log(ld_error, _sd, "couldn't initialize lws");
         return NULL;
     }
 
-    _sd.gsd.state = LD_GATEWAY_UNCONNECTED;
+//    _sd->gsd = malloc(sizeof(struct ld_lws_sessiondata));
 
-    return &_sd;
+    _sd->gsd->state = LD_GATEWAY_UNCONNECTED;
+
+    return _sd;
 }
+
 int ld_begin(struct ld_sessiondata *sd) {
-    //open the websocket connection and return the lws
-    struct lws_client_connect_info info;
-    memset(&info, 0, sizeof(struct lws_client_connect_info));
-
-    //todo: generate context and connection info
-    info.context  = sd->ws_context;
-
-    if(strspn(sd->gateway_shard_url, "wss://") == 6)
-        info.address = strdup(sd->gateway_shard_url + 6);
-    else
-        info.address = strdup(sd->gateway_shard_url);
-
-    char *ads_port;
-    ads_port = malloc((strlen(info.address) + 10) * sizeof(char));
-    sprintf(ads_port, "%s:%u", info.address, 443&65535);
-    info.port = 443;
-    info.ssl_connection = 1;
-    info.path = "/?v="
-    /*
-    char *ads_port;
-    ads_port = malloc((strlen(gateway_url) + 6) * sizeof(char));
-    sprintf(ads_port, "%s:%u", gateway_url, 443 & 65535);
-
-    if(strspn(gateway_url, "wss://") == 6)
-        i->address = strdup(gateway_url + 6);
-    else
-        i->address = strdup(gateway_url);
-
-    i->context = context;
-    i->port = 443;
-    i->ssl_connection = 1;
-    i->path = "/?v=" LD_DISCORDAPI_VERSION "&encoding=" LD_DISCORDAPI_WSENCODING;//"/?v=6&encoding=json"
-    i->host = ads_port;
-    i->origin = ads_port;
-    i->protocol = protocols[0].name;
-     */
-    lws_client_connect_via_info()
+//    sd->gsd->state = LD_GATEWAY_CONNECTING;
+    ld_gateway_connect(sd);
     return 0;
 }
+
 void ld_close_sessiondata(struct ld_sessiondata *sd) {
     ;
 }

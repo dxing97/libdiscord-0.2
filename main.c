@@ -11,6 +11,7 @@
 #include <signal.h>
 
 #include "libdiscord.h"
+//#include "json.h"
 
 static int force_exit = 0;
 static void interupt_handler(int signum) {
@@ -91,6 +92,33 @@ int main(int argc, char *argv[]) {
 
     //begin looping
     while(!force_exit) {
+        switch(sd->gsd->state) {
+            case LD_GATEWAY_UNCONNECTED:
+                //start a connection
+                ld_log(ld_notice, sd, "currently unconnected to gateway");
+                ld_begin(sd);
+                break;
+            case LD_GATEWAY_DISCONNECTED:
+                //do something based on why we got disconnected
+                goto bail;
+//                break;
+            case LD_GATEWAY_CONNECTING:
+                //assuming we've sucessfully connected to the gateway, send the identify
+                ld_log(ld_debug, sd, "gsd state: connecting");
+                json_t *ident_payload;
+                ident_payload = ld_json_create_identify(sd);
+                ld_log(ld_debug, sd, "identify payload: %s", json_dumps(ident_payload, 0), 0);
+                sd->gsd->payload = malloc(strlen(json_dumps(ident_payload, 0)));
+                sd->gsd->payload = strcpy(sd->gsd->payload, json_dumps(ident_payload, 0));
+                ld_gateway_write(sd);
+                sd->gsd->state = LD_GATEWAY_CONNECTED;
+                break;
+            case LD_GATEWAY_CONNECTED:
+                //typical webscocket stuff
+//                ld_log(ld_notice, sd, "connected to gateway");
+                ld_service_gateway(sd);
+                break;
+        }
         /*
         switch(sd.gsd.state) {
             case LD_GATEWAY_UNCONNECTED:
@@ -105,11 +133,11 @@ int main(int argc, char *argv[]) {
                 hueh? probably exit
         }
          */
-        sleep(5);
-        ld_log(ld_notice, sd, "slept for 5 seconds, exiting");
-        break;
+        usleep(500);
+//        ld_log(ld_notice, sd, "slept for 5 seconds, exiting");
+//        break;
     }
-
+    bail:
     ld_close_sessiondata(sd);
     return 0;
 

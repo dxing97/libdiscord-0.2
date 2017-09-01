@@ -22,6 +22,10 @@
  * last_gateway_connect:    the time at which we last connected to a gateway (max. is LD_GATEWAY_CONNECTION_LIMIT)
  *
  */
+
+#include "websocket.h"
+
+
 struct ld_sessiondata {
     char *bot_token;
     char *gateway_url;
@@ -29,15 +33,14 @@ struct ld_sessiondata {
     int shard_number;
     TAILQ_HEAD(, ld_hsq_entry) ld_hsq_head;
     long last_gateway_connect;
-    struct lws_context *ws_context;
     unsigned int log_level;
-    struct ld_lws_sessiondata gsd;
+    struct ld_lws_sessiondata *gsd;
 };
+#include "json.h"
 #include "http.h"
 #include "websocket.h"
 #include "config.h"
 
-#include "json.h"
 #include "logging.h"
 
 #include "libdiscordConfig.h"

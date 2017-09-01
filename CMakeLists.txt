@@ -6,7 +6,7 @@ set(LD_VERSION_MINOR 1)
 set(LD_VERSION_PATCH 0)
 
 set(LD_API_VERSION 6)
-set(LD_GATEWAY_ENCODING "encoding=json")
+set(LD_GATEWAY_ENCODING "json")
 
 #number of seconds between connection attempts to the gateway (min allowed by Discord is 5)
 set(LD_GATEWAY_CONNECTION_LIMIT 6)
@@ -29,12 +29,14 @@ set(LIBS websockets ulfius yder orcania jansson config)
 set(CMAKE_C_STANDARD 99)
 
 set(SOURCE_FILES
+        json.h json.c
         libdiscord_private.h
         main.c
         libdiscord.h
         config.h
         config.c
-        libdiscordConfig.h.in libdiscord.c  http.h http.c json.h json.c logging.h logging.c libdiscord_private.c ratelimit.c ratelimit.h websocket.c websocket.h)
+        libdiscordConfig.h.in libdiscord.c  http.h http.c logging.h logging.c
+        libdiscord_private.c ratelimit.c ratelimit.h websocket.c websocket.h)
 add_executable(libdiscordv0_1 ${SOURCE_FILES} )
 
 target_compile_options(libdiscordv0_1 PRIVATE "-Wall")
