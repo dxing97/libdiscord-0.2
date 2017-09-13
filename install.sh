@@ -1,10 +1,13 @@
 #!/bin/bash
 #dependency installer for libdiscord bot2
 #eventually it'll also install libdiscord itself as well as any bots but for now it just takes care of dependencies
+#many improvements can be made to this script
 
 #supported distributions:
 #Ubuntu 17.04 on x86_64
-#todo: test Debian on Raspberry Pi, CentOS on x86, SunOS on SPARC (especially CentOS and SunOS. Can't apt your way through those...)
+#todo: test Debian(Raspbian) on Raspberry Pi, CentOS on x86, SunOS on SPARC (especially CentOS and SunOS. Can't apt your way through those...)
+#try using uname as well, especially for SunOS/Solaris detection (returns "Linux" for other kernels)
+#windows is probably not going to be supported anytime soon
 
 OS=$(lsb_release -si)
 VER=$(lsb_release -sr)
@@ -40,8 +43,21 @@ case $OS in
 esac
 	 
 sudo apt update && sudo apt upgrade
+
+#todo: detect the version of different dependencies for extra assurance that they work. Warn otherwise.
+#maybe some combos of dependencies work but some don't? try checking over a wide range of package versions
+#todo: add yum stuff for CentOS/RHEL distros
+#todo: if a package can't be found (or packages can't be installed in general, maybe ask if we can compile dependencies from source?
+#especially if the user doesn't have superuser privileges or packages just aren't available for that specific distro.
+
 sudo apt install checkinstall libmicrohttpd-dev libjansson-dev libcurl4-gnutls-dev libgnutls28-dev libgcrypt20-dev git make cmake gcc libssl-dev libuv-dev libconfig-dev
 cd ~/
+
+
+#todo: detect if ulfius and libwebsockets are already installed (really anything that needs to be compiled from source)
+#if they're already installed, check their version (if there is one)
+#todo: switch from bleeding edge to versioned releases of Ulfius and LWS (THIS IS A BIG ONE! LWS and Ulfius have already
+# had many patches and updates in the bleeding edge since libdiscord development started.)
 
 #build from source and install ulfius and dependencies
 git clone https://github.com/babelouest/ulfius.git
@@ -66,9 +82,4 @@ make
 sudo checkinstall --pkgname libwebsockets
 sudo ldconfig
 
-#compile client 
-#gcc -lwebsockets -lssl -lcrypto test-client.c -lwebsockets -lssl -lcrypto
-
-#todo: detect if ulfius and libwebsockets are already installed
-#todo: detect the version of different dependencies to make sure they work
 #todo: add bot2 compilation and installation here as well
