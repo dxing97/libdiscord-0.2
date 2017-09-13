@@ -182,3 +182,7 @@ int ld_gateway_write(struct ld_sessiondata *sd) {
     return 0;
 }
 
+int ld_gateway_identify(struct ld_sessiondata *sd) {
+    return 0;
+}
+
