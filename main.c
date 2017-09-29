@@ -21,6 +21,8 @@ static void interupt_handler(int signum) {
 int main(int argc, char *argv[]) {
     printf("Bot2 startup: using %s v%d.%d.%d\n", LD_NAME, LD_VERSION_MAJOR, LD_VERSION_MINOR, LD_VERSION_PATCH);
 
+    //try sending a message to xingworks bot testing: "libDiscord bot 2 test"
+
     if(signal(SIGINT, interupt_handler) == SIG_ERR) {
         fprintf(stderr, "couldn't set signal handler for SIGINT\n");
         return 1;
@@ -90,6 +92,28 @@ int main(int argc, char *argv[]) {
 
     printf("initialized sessiondata\n");
 
+    struct _u_request *req;
+    struct _u_response *rep;
+    rep = malloc(sizeof(struct _u_response));
+    req = malloc(sizeof(struct _u_request));
+    req = ld_http_generate_request_string(sd, LD_HTTP_POST,
+                                    "/channels/342013131121229824/messages",
+                                    "{\"attachments\":[],\"tts\":false,\"embeds\":[],"
+                                                  "\"timestamp\":\"2017-07-11T17:27:07.299000+00:00\","
+                                                  "\"mention_everyone\":false,\"id\":\"334385199974967042\","
+                                                  "\"pinned\":false,\"edited_timestamp\":null,"
+                                                  "\"author\":{\"username\":\"Daxe\","
+                                                  "\"discriminator\":\"1955\",\"id\":\"213084722123767809\","
+                                                  "\"avatar\":\"a_bab14f271d565501444b2ca3be944b25\"},"
+                                                  "\"mention_roles\":[],"
+                                                  "\"content\":\"libDiscord v0.2.0 bot 2 startup notification message\","
+                                                  "\"channel_id\":\"290926798999357250\",\"mentions\":[],\"type\":0}"
+
+    );
+    ulfius_send_http_request(req, rep);
+
+    ld_http_print_response(sd, rep);
+
     //begin looping
     while(!force_exit) {
         switch(sd->gsd->state) {
@@ -119,20 +143,6 @@ int main(int argc, char *argv[]) {
                 ld_service_gateway(sd);
                 break;
         }
-        /*
-        switch(sd.gsd.state) {
-            case LD_GATEWAY_UNCONNECTED:
-                start a connection
-            case LD_GATEWAY_DISCONNECTED:
-                depending on the context, start a connection, wait, or something else
-            case  LD_GATEWAY_CONNECTING:
-                do nothing(?)
-            case LD_GATEWAY_CONNECTED:
-                write, read, heartbeat, etc.
-            default
-                hueh? probably exit
-        }
-         */
         usleep(500);
 //        ld_log(ld_notice, sd, "slept for 5 seconds, exiting");
 //        break;

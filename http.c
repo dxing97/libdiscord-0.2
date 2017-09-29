@@ -63,7 +63,7 @@ struct _u_request *ld_http_generate_request_string(struct ld_sessiondata *sd, en
     }
     switch (verb) {
         case LD_HTTP_POST:
-            req->http_verb = strdup("VERB");
+            req->http_verb = strdup("POST");
             break;
         case LD_HTTP_GET:
             req->http_verb = strdup("GET");
@@ -91,6 +91,7 @@ struct _u_request *ld_http_generate_request_string(struct ld_sessiondata *sd, en
     strcpy(tmp, LD_API_BASE_URL);
     strcat(tmp, path);
     req->http_url = strdup(tmp);
+    ld_log(ld_debug, sd, "HTTP request path: %s", req->http_url);
     free(tmp);
 
     req->timeout = 20;
@@ -104,6 +105,7 @@ struct _u_request *ld_http_generate_request_string(struct ld_sessiondata *sd, en
     snprintf(tmp, 1000, "DiscordBot ($%s, $v%d.%d.%d)", LD_META, LD_VERSION_MAJOR, LD_VERSION_MINOR, LD_VERSION_PATCH);
     u_map_put(&headers, "User-Agent", tmp);
     free(tmp);
+    u_map_put(&headers, "Content-Type", "application/json");
 
     u_map_copy_into(req->map_header, &headers);
 

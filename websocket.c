@@ -7,7 +7,8 @@
 int _ld_ws_callback(struct lws *wsi, enum lws_callback_reasons reason,
                     void *user, void *in, size_t len) {
     struct ld_sessiondata *sd = _sd;
-
+    int i = 10;
+    char *payload = user;
     switch(reason) {
         case LWS_CALLBACK_CLIENT_CONNECTION_ERROR:
             ld_log(ld_error, sd, "error trying to connect to the gateway: %.*s", len, in);
@@ -27,49 +28,61 @@ int _ld_ws_callback(struct lws *wsi, enum lws_callback_reasons reason,
             break;
         case LWS_CALLBACK_CLIENT_RECEIVE:
             ld_log(ld_info, sd, "received payload from Gateway");
-            ld_log(ld_debug, sd, "gateway payload:\n%.*s", len, in);
+            ld_log(ld_debug, sd, "gateway recieved payload:\n%.*s", len, in);
+            ld_log(ld_debug, sd, "payload opcode: %d", ld_json_get_opcode_buffer(sd, in, len));
+            switch(ld_json_get_opcode_buffer(sd, in, len)) {
+                case LD_OPCODE_NO_OP:
+                    break;
+                case LD_OPCODE_HELLO:
+                    break;
+                case LD_OPCODE_DISPATCH:
+                    /*
+                     * if the JSON d(object) contains object keyvalue "content" with value "ayy"
+                     *      send HTTP POST Message in Proving Grounds/#singular-one  with message content "lmao"
+                     */
+
+                    break;
+                default:
+                    break;
+            }
+            /*
+             * case: recieved payload type
+             *     dispatch (opcode 0)
+             *          if it's a message object and object field "content" is "ayy"
+             *              send "lmao" to that channel
+            *           save the sequence number (s)
+             *
+             */
             break;
         case LWS_CALLBACK_CLIENT_WRITEABLE:
             ld_log(ld_info, sd, "socket writable");
             //payload is in sd->gsd->payload
-//            printf("CLIENT_WRITABLE callback\n");
-//            if (sd.ws_state == LD_WSSTATE_SENDING_PAYLOAD) {
-//                printf("sending heartbeat\n");
-//                i = sprintf("%s", (char *) &(sd.wsd->buf[LWS_PRE]), json_dumps(ld_create_payload_heartbeat(sd.last_seq_num), 0));
-//                if(i <= 0) {
-//                    fprintf(stderr, "couldn't write JSON payload to buffer");
-//                    return -1;
-//                }
-//                sd.wsd->len = (unsigned) i;
-//
-//                lwsl_notice("TX: %s\n", &sd.wsd->buf[LWS_PRE]);
-//                i = lws_write(wsi, &(sd.wsd->buf[LWS_PRE]), sd.wsd->len, LWS_WRITE_TEXT);
-//                if(i < 0) {
-//                    lwsl_err("ERROR %d writing to socket, hanging up\n", i);
-//                    return -1;
-//                }
-//                if(i < (int)sd.wsd->len) {
-//                    lwsl_err("Partial write\n");
-//                    return -1;
-//                }
-//                sd.ws_state = LD_WSSTATE_CONNECTED_IDENTIFIED;
-//                break;
-//            }
-//            lwsl_notice("TX: %s\n", &sd.wsd->buf[LWS_PRE]);
-//            i = lws_write(wsi, &(sd.wsd->buf[LWS_PRE]), sd.wsd->len, LWS_WRITE_TEXT);
-//            if(i < 0) {
-//                lwsl_err("ERROR %d writing to socket, hanging up\n", i);
-//                return -1;
-//            }
-//            if(i < (int)sd.wsd->len) {
-//                lwsl_err("Partial write\n");
-//                return -1;
-//            }
-//            break;
+            if(sd->gsd->payload == NULL) {
+                ld_log(ld_warning, sd, "LWS_CALLBACK_CLIENT_WRITABLE: nothing in sd->gsd->payload to send");
+                break;
+            }
+
+            i = sprintf(payload + LWS_PRE, "%s", sd->gsd->payload); //todo: segfault here
+            if(i <= 0) {
+                ld_log(ld_error, sd, "couldn't write JSON payload to buffer");
+                return -1;
+            }
+            lwsl_notice("TX: %s\n", payload + LWS_PRE);
+            i = lws_write(wsi, (unsigned char *) (payload + LWS_PRE), strlen(sd->gsd->payload), LWS_WRITE_TEXT);
+            if(i < 0) {
+                lwsl_err("ERROR %d writing to socket, hanging up\n", i);
+                return -1;
+            }
+            if(i < strlen(sd->gsd->payload)) {
+                lwsl_err("Partial write\n");
+                return -1;
+            }
+            free(sd->gsd->payload);
+            sd->gsd->payload = NULL;
             break;
         case LWS_CALLBACK_WS_PEER_INITIATED_CLOSE:
             ld_log(ld_warning, sd, "peer initiated close!");
-            ld_log(ld_debug, sd, "CLOSE CODE: %u\nCONTEXT:\n%s", (unsigned int) (( unsigned char *)in)[0] << 8 | (( unsigned char *)in)[1], in+2);
+            ld_log(ld_debug, sd, "peer init close: close code: %u\nCONTEXT:\n%s", (unsigned int) (( unsigned char *)in)[0] << 8 | (( unsigned char *)in)[1], in+2);
             sd->gsd->close_code = (unsigned int) (( unsigned char *)in)[0] << 8 | (( unsigned char *)in)[1];
             break;
         default:

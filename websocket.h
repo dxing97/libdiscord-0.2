@@ -19,7 +19,7 @@ enum connectionstate {
 
 enum ld_opcode {
     //discord dispatch opcodes as of API v6
-            LD_OPCODE_NO_OP = -1,
+    LD_OPCODE_NO_OP = -1,
     LD_OPCODE_DISPATCH = 0,
     LD_OPCODE_HEARTBEAT = 1,
     LD_OPCODE_IDENTIFY = 2,
@@ -33,6 +33,7 @@ enum ld_opcode {
     LD_OPCODE_HELLO = 10,
     LD_OPCODE_HEARTBEAT_AK = 11
 };
+
 
 struct ld_lws_sessiondata {
     enum connectionstate state;
@@ -95,5 +96,7 @@ int ld_gateway_identify(struct ld_sessiondata *sd);
  * todo: consider adding options to place something at the beginning/end of the queue
  */
 int ld_gateway_queuewrite(struct ld_sessiondata *sd, char *payload);
+
+
 
 #endif //LIBDISCORDV0_1_WEBSOCKET_H

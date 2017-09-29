@@ -72,3 +72,84 @@ json_t* ld_json_create_identify(struct ld_sessiondata *sd) {
 
     return payload;
 }
+
+enum ld_opcode ld_json_get_opcode_string(struct ld_sessiondata *sd, const char *payload_string) {
+    json_t *payload;
+    json_error_t *jerror;
+    int ret;
+    payload = malloc(sizeof(json_t));
+    jerror = malloc(sizeof(json_error_t));
+
+    payload = json_loads(payload_string, 0, jerror);
+    if(payload == NULL){
+        ld_json_errorhandler(sd, jerror, "loading gateway payload in ld_json_get_opcode_buffer");
+        return LD_OPCODE_NO_OP;
+    }
+    ret = ld_json_get_opcode(sd, payload);
+
+    free(payload);
+    free(jerror);
+    return ret;
+}
+
+enum ld_opcode ld_json_get_opcode_buffer(struct ld_sessiondata *sd, const char *payload_buffer, size_t payload_length) {
+    json_t *payload;
+    json_error_t *jerror;
+    int ret;
+    payload = malloc(sizeof(json_t));
+    jerror = malloc(sizeof(json_error_t));
+
+    payload = json_loadb(payload_buffer, payload_length, 0, jerror);
+    if(payload == NULL){
+        ld_json_errorhandler(sd, jerror, "loading gateway payload in ld_json_get_opcode_buffer");
+        return LD_OPCODE_NO_OP;
+    }
+    ret = ld_json_get_opcode(sd, payload);
+
+    free(payload);
+    free(jerror);
+    return ret;
+}
+
+enum ld_opcode ld_json_get_opcode(struct ld_sessiondata *sd, json_t *payload) {
+    json_t *opcode;
+    opcode = json_object_get(payload, "op");
+    if(opcode == NULL || (json_is_integer(opcode) == 0))
+        return LD_OPCODE_NO_OP;
+    return (int) json_integer_value(opcode);
+}
+
+/*
+ * returns 1 if buffer JSON payload contains a discord message "ayy"
+ * returns 0 otherwise
+ */
+int ld_json_opcode_ayydetect(struct ld_sessiondata *sd, char *payload_buffer, size_t payload_length){
+    json_t *payload, *data, *content;
+    json_error_t *jerror;
+//    int ret;
+    payload = malloc(sizeof(json_t));
+    data = malloc(sizeof(json_t));
+    content = malloc(sizeof(json_t));
+    jerror = malloc(sizeof(json_error_t));
+
+    payload = json_loadb(payload_buffer, payload_length, 0, jerror);
+    if(payload == NULL){
+        ld_json_errorhandler(sd, jerror, "loading DISPATCH(0) payload in ld_json_get_opcode_buffer");
+        return LD_OPCODE_NO_OP;
+    }
+//    ret = ld_json_get_opcode(sd, payload);
+    data = json_object_get(payload, "d");
+    if(data == NULL || (json_is_object(data) == 0))
+        return LD_OPCODE_NO_OP;
+
+    content = json_object_get(content, "content");
+    if(content == NULL || (json_is_string(content) == 0))
+        return LD_OPCODE_NO_OP;
+
+
+    free(content);
+    free(data);
+    free(payload);
+    free(jerror);
+    return 0;
+}
