@@ -142,10 +142,14 @@ int ld_json_opcode_ayydetect(struct ld_sessiondata *sd, char *payload_buffer, si
     if(data == NULL || (json_is_object(data) == 0))
         return LD_OPCODE_NO_OP;
 
-    content = json_object_get(content, "content");
+    content = json_object_get(data, "content");
     if(content == NULL || (json_is_string(content) == 0))
         return LD_OPCODE_NO_OP;
+    if(strcmp(json_string_value(content), "ayy") != 0) {
+        return LD_OPCODE_NO_OP;
+    }
 
+    ld_log(ld_info, sd, "detected \"ayy\" message");
 
     free(content);
     free(data);

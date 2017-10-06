@@ -40,6 +40,33 @@ int _ld_ws_callback(struct lws *wsi, enum lws_callback_reasons reason,
                      * if the JSON d(object) contains object keyvalue "content" with value "ayy"
                      *      send HTTP POST Message in Proving Grounds/#singular-one  with message content "lmao"
                      */
+                    if(ld_json_opcode_ayydetect(sd, in, len) != -1) {
+                        struct _u_request *req;
+                        struct _u_response *rep;
+                        rep = malloc(sizeof(struct _u_response));
+                        req = malloc(sizeof(struct _u_request));
+                        req = ld_http_generate_request_string(sd, LD_HTTP_POST,
+                                                              "/channels/342013131121229824/messages",
+                                                              "{\"attachments\":[],\"tts\":false,\"embeds\":[],"
+                                                                      "\"timestamp\":\"2017-07-11T17:27:07.299000+00:00\","
+                                                                      "\"mention_everyone\":false,\"id\":\"334385199974967042\","
+                                                                      "\"pinned\":false,\"edited_timestamp\":null,"
+                                                                      "\"author\":{\"username\":\"Daxe\","
+                                                                      "\"discriminator\":\"1955\",\"id\":\"213084722123767809\","
+                                                                      "\"avatar\":\"a_bab14f271d565501444b2ca3be944b25\"},"
+                                                                      "\"mention_roles\":[],"
+                                                                      "\"content\":\"lmao\","
+                                                                      "\"channel_id\":\"290926798999357250\",\"mentions\":[],\"type\":0}"
+
+                        );
+
+//                        usleep(500000);
+                        ulfius_send_http_request(req, rep);
+
+                        ld_http_print_response(sd, rep);
+//                    free(req);
+//                    free(rep);
+                    }
 
                     break;
                 default:

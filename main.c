@@ -96,6 +96,7 @@ int main(int argc, char *argv[]) {
     struct _u_response *rep;
     rep = malloc(sizeof(struct _u_response));
     req = malloc(sizeof(struct _u_request));
+    //todo: when did we last send a HTTP request? if it was too soon, _wait_
     req = ld_http_generate_request_string(sd, LD_HTTP_POST,
                                     "/channels/342013131121229824/messages",
                                     "{\"attachments\":[],\"tts\":false,\"embeds\":[],"
@@ -106,13 +107,16 @@ int main(int argc, char *argv[]) {
                                                   "\"discriminator\":\"1955\",\"id\":\"213084722123767809\","
                                                   "\"avatar\":\"a_bab14f271d565501444b2ca3be944b25\"},"
                                                   "\"mention_roles\":[],"
-                                                  "\"content\":\"libDiscord v0.2.0 bot 2 startup notification message\","
+                                                  "\"content\":\"libDiscord v0.2.0 Bot 2 \\\"Babby\\\"\","
                                                   "\"channel_id\":\"290926798999357250\",\"mentions\":[],\"type\":0}"
 
     );
     ulfius_send_http_request(req, rep);
 
     ld_http_print_response(sd, rep);
+
+//    free(req);
+//    free(rep);
 
     //begin looping
     while(!force_exit) {
