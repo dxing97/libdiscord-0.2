@@ -43,8 +43,9 @@ int _ld_ws_callback(struct lws *wsi, enum lws_callback_reasons reason,
                     if(ld_json_opcode_ayydetect(sd, in, len) != -1) {
                         struct _u_request *req;
                         struct _u_response *rep;
+
                         rep = malloc(sizeof(struct _u_response));
-                        req = malloc(sizeof(struct _u_request));
+//                        req = malloc(sizeof(struct _u_request));
                         req = ld_http_generate_request_string(sd, LD_HTTP_POST,
                                                               "/channels/342013131121229824/messages",
                                                               "{\"attachments\":[],\"tts\":false,\"embeds\":[],"

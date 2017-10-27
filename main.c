@@ -113,7 +113,7 @@ int main(int argc, char *argv[]) {
     );
     ulfius_send_http_request(req, rep);
 
-    ld_http_print_response(sd, rep);
+//    ld_http_print_response(sd, rep);
 
 //    free(req);
 //    free(rep);
