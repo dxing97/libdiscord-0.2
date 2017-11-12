@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.7)
 project(libdiscordv0_2)
 
 set(LD_VERSION_MAJOR 0)
-set(LD_VERSION_MINOR 1)
+set(LD_VERSION_MINOR 2)
 set(LD_VERSION_PATCH 0)
 
 set(LD_API_VERSION 6)

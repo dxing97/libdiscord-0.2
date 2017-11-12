@@ -1,3 +1,7 @@
+#THIS CODE HAS REACHED PEAK SPAGHETTI
+This repo won't be updated for the forseeable future. Check out the 
+latest iteration of libdiscord for more.
+
 # Bot 2
 This bot will connect to the Discord gateway, remain connected, 
     and have it's current game set to the name of this library. (libdiscord v0.1.0 or whatever is in CMakeLists.txt)
